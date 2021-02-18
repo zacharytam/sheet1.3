@@ -21,21 +21,29 @@
             <groupId>com.aspose</groupId>
             <artifactId>aspose-cells</artifactId>
             <version>8.1.2</version>
+            <scope>system</scope>
+            <systemPath>/home/apis/aspose-cells-8.1.2.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>javax.faces</artifactId>
+            <groupId>javax.faces</groupId>
+            <artifactId>javax.faces-api</artifactId>
             <version>2.2.8</version>
+            <scope>system</scope>
+            <systemPath>/home/apis/javax.faces-2.2.8-35-sources.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.primefaces</groupId>
             <artifactId>primefaces</artifactId>
             <version>5.0</version>
+            <scope>system</scope>
+            <systemPath>/home/apis/primefaces-5.0.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.primefaces.extensions</groupId>
             <artifactId>primefaces-extensions</artifactId>
             <version>2.1.0</version>
+            <scope>system</scope>
+            <systemPath>/home/apis/primefaces-extensions-2.1.0.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.primefaces.themes</groupId>  
