@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <h:head>
+        <title>Spreadsheet Editor</title>
+        <script type="text/javascript" src="//www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="gvjtm9s3gidxu11"></script>
+        <h:outputScript library="spreadsheeteditor" name="script.js" />
+        <h:outputScript library="spreadsheeteditor" name="dropbox-chooser.js" />
+        <h:outputStylesheet library="spreadsheeteditor" name="style.css" />
+    </h:head>
+
+    <h:body>
+        <ui:debug hotkey="x" />
+        <p:growl id="notifications" autoUpdate="true" showDetail="true" />
+
+        <h:form>
+            <p:menubar>
+                <p:submenu label="File">
+                    <p:menuitem value="New" actionListener="#{worksheet.loadBlank}" update="@all" />
+                    <p:menuitem value="Open from Computer" onclick="showFileUploadDialog()" />
+                    <p:menuitem value="Open from Dropbox" onclick="showDropboxChooser()" />
+                    <p:menuitem value="Save" target="_blank" actionListener="#{worksheet.save}" ajax="false" />
+                    <p:separator />
+                </p:submenu>
+                <p:submenu label="Help">
+                    <p:menuitem value="About" onclick="showAboutDialog()" />
+                </p:submenu>
+                <f:facet name="options">
+                    <div style="text-wrap: none">
+                        <p:ajaxStatus style="display:inline-block">
+                            <f:facet name="default">
+                            </f:facet>
+                            <f:facet name="start">
+                                <h:outputText value="Loading" />
+                            </f:facet>
+                            <f:facet name="success">
+                                <h:outputText value="Ready" />
+                            </f:facet>
+                            <f:facet name="error">
+                                <h:outputText value="Error" />
+                            </f:facet>
+                        </p:ajaxStatus>
+                        <p:selectOneMenu rendered="#{worksheet.loaded}" id="sheetswitcher" value="#{worksheet.activeSheet}" editable="true" style="width:200px;vertical-align:top;">
+                            <p:ajax partialSubmit="true" update=":form:sheet sheetswitcher"/>
+                            <f:selectItems value="#{worksheet.sheets}" />
+                        </p:selectOneMenu>
+
+                        <p:commandButton rendered="#{worksheet.loaded}" icon="ui-icon-plus" actionListener="#{worksheet.onAddNewSheet}" async="true" partialSubmit="true" update=":form:sheet sheetswitcher" />
+                        <p:commandButton rendered="#{worksheet.loaded}" icon="ui-icon-minus" actionListener="#{worksheet.onRemoveActiveSheet}" async="true" partialSubmit="true" update=":form:sheet sheetswitcher" />
+                    </div>
+                </f:facet>
+            </p:menubar>
+        </h:form>
+
+        <h:form rendered="#{!worksheet.loaded}" >
+            <p:panel style="width: 500px; margin: 50px auto">
+                <h2>Spreadsheet Editor</h2>
+                You can ...
+                <ul>
+                    <li>Create a new file</li>
+                    <li>Open a file saved on your computer</li>
+                    <li>Open a file saved online in your Dropbox</li>
+                    <li>Open a publicly available file on Internet. You can specify the file using <code>?url=</code> parameter</li>
+                </ul>
+            </p:panel>
+        </h:form>
+
+        <h:form id="form">
+            <p:dataTable
+                id="sheet"
+                rendered="#{worksheet.loaded}"
+                widgetVar="sheet"
+                var="row"
+                value="#{worksheet.rows}"
+                selectionMode="single"
+                editable="true"
+                editMode="cell"
+                resizableColumns="true"
+                rowKey="#{row.id}"
+                disabledSelection="true"
+                style="overflow: scroll">
+
+                <p:ajax event="colResize" listener="#{worksheet.onColumnResize}" partialSubmit="true" />
+                <p:ajax event="cellEdit" listener="#{worksheet.onCellEdit}" partialSubmit="true" update=":form:sheet" />
+
+                <p:column style="text-align: right; width: 20px">
+                    <h:outputText value="#{row.id + 1}" />
+                </p:column>
+
+                <c:forEach var="column" items="#{worksheet.columns}">
+                    <p:column headerText="#{column.name}" style="width:#{worksheet.getColumnWidth(column.id)}px; height:#{worksheet.getRowHeight(row.id)}px;" styleClass="ui-editable-column" colspan="#{row.cellsMap[column.name].colspan}" rowspan="#{row.cellsMap[column.name].rowspan}">
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <div style="#{row.cellsMap[column.name].style} display:block; width:100%; height:100%">
+                                    #{row.cellsMap[column.name].value}
+                                </div>
+                            </f:facet>
+                            <f:facet name="input">
+                                <p:inputText value="#{row.cellsMap[column.name]}" converter="cellEditorConverter">
+                                    <f:passThroughAttribute name="data-columnId" value="#{column.id}" />
+                                    <f:passThroughAttribute name="data-rowId" value="${row.id}" />
+                                </p:inputText>
+                            </f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                </c:forEach>
+
+            </p:dataTable>
+
+        </h:form>
+
+        <h:form id='contextMenuForm'>
+            <div style="display:none">
+                <h:inputText class="current-columnId-holder" value="#{worksheet.currentColumnId}" />
+                <h:inputText class="current-rowId-holder" value="#{worksheet.currentRowId}"/>
+            </div>
+
+            <p:contextMenu for=":form:sheet">
+                <p:submenu label="Rows" icon="ui-icon-refresh">
+                    <p:menuitem value="Add a Row above" action="#{worksheet.addRowAbove}" update=":form:sheet" onstart="fillCurrentColumnRowValues('#contextMenuForm')" />
+                    <p:menuitem value="Add a Row below" action="#{worksheet.addRowBelow}" update=":form:sheet" onstart="fillCurrentColumnRowValues('#contextMenuForm')" />
+                    <p:menuitem value="Delete Row" action="#{worksheet.deleteRow}" update=":form:sheet" onstart="fillCurrentColumnRowValues('#contextMenuForm')" />
+                </p:submenu>
+                <p:submenu label="Columns" icon="ui-icon-refresh">
+                    <p:menuitem value="Add a Column on Left" action="#{worksheet.addColumnBefore}" update=":form:sheet" onstart="fillCurrentColumnRowValues('#contextMenuForm')" />
+                    <p:menuitem value="Add a Column on Right" action="#{worksheet.addColumnAfter}" update=":form:sheet" onstart="fillCurrentColumnRowValues('#contextMenuForm')" />
+                    <p:menuitem value="Delete Column" action="#{worksheet.deleteColumn}" update=":form:sheet" onstart="fillCurrentColumnRowValues('#contextMenuForm')" />
+                </p:submenu>
+            </p:contextMenu>
+        </h:form>
+
+        <p:dialog widgetVar="aboutDialog" header="About" modal="true" style="text-align: center">
+            <h:graphicImage value="logo.jpg" />
+            <h3>Spreadsheet Editor</h3>
+            &#9400; Aspose 2002-2014. All Rights Reserved.
+        </p:dialog>
+
+        <h:form style="display:none">
+            <p:fileUpload widgetVar="fileUploadDialog" allowTypes="/(\.|\/)(xlsx|xls|ods)$/" auto="true" fileUploadListener="#{worksheet.onFileUpload}" update="@all" />
+        </h:form>
+
+        <h:form style="display:none">
+            <p:inputText widgetVar="currentColumnIdValue" value="#{worksheet.currentColumnId}" />
+            <p:inputText widgetVar="currentRowIdValue" value="#{worksheet.currentRowId}" />
+        </h:form>
+
+        <h:form style="display:none">
+            <p:inputText widgetVar="dropboxChooserSelectedUrl" value="#{worksheet.sourceUrl}" />
+            <p:commandButton widgetVar="dropboxChooserSelectedUrlApply" actionListener="#{worksheet.loadFromUrl()}" update="@all" />
+        </h:form>
+
+    </h:body>
+</html>
+
