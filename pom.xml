@@ -66,10 +66,9 @@
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
-                    <compilerArgs> 
-                        <arg>-extdirs</arg> 
-                        <arg>/home/apis/</arg>
-                    </compilerArgs> 
+                    <compilerArguments>
+                        <extdirs>/home/apis/</extdirs>
+                    </compilerArguments>
                 </configuration>
             </plugin>
             <plugin>
