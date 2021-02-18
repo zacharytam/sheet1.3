@@ -66,9 +66,10 @@
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
-                    <compilerArguments>
-                        <endorseddirs>${endorsed.dir}</endorseddirs>
-                    </compilerArguments>
+                    <compilerArgs> 
+                        <arg>-extdirs</arg> 
+                        <arg>/home/apis/</arg>
+                    </compilerArgs> 
                 </configuration>
             </plugin>
             <plugin>
@@ -98,13 +99,6 @@
                                     <artifactId>javaee-endorsed-api</artifactId>
                                     <version>7.0</version>
                                     <type>jar</type>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.maven.plugins</groupId>
-                                    <artifactId>maven-toolchain</artifactId>
-                                    <version>1.0</version>
-                                    <scope>system</scope>
-                                    <systemPath>/home/apis/maven-toolchain-1.0.jar</systemPath>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
