@@ -56,11 +56,6 @@
             <version>7.0</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-toolchain</artifactId>
-            <version>1.0</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -117,10 +112,6 @@
         </plugins>
     </build>
     <repositories>
-        <repository>
-            <url>https://mvnrepository.com/</url>
-            <id>central</id>
-        </repository>
         <repository>
             <url>http://repository.primefaces.org/</url>
             <id>primefaces-maven-repository</id>
