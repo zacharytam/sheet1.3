@@ -132,6 +132,10 @@
     </build>
     <repositories>
         <repository>
+            <url>https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-toolchains-plugin/1.0/</url>
+            <id>maven-toolchains-plugin</id>
+        </repository>
+        <repository>
             <url>http://repository.primefaces.org/</url>
             <id>primefaces-maven-repository</id>
         </repository>
