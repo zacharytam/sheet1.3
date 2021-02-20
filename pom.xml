@@ -68,7 +68,8 @@
                     <target>1.7</target>
                     <encoding>UTF-8</encoding>
                     <compilerArgs>
-                        <arg>/home/mavenCompiler-All</arg>
+                        <arg>/home/mavenCompiler-All/maven-compiler-plugin-3.1.jar</arg>
+                        <arg>/home/mavenCompiler-All/maven-toolchain-1.0.jar</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>
