@@ -114,11 +114,5 @@
             <id>aspose-maven-repository</id>
         </repository>
     </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>localrepo</id>
-            <url>/home/mavenCompiler-All/</url>
-        </pluginRepository>
-    </pluginRepositories>
 </project>
 
