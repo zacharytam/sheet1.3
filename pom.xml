@@ -114,7 +114,7 @@
             <id>aspose-maven-repository</id>
         </repository>
         <repository>
-            <url>file://root/.m2/repository/zachary/maven-dependency-plugin2.8</url>
+            <url>file://root/.m2/repository/zachary/maven-dependency-plugin2.8/</url>
             <id>repo1</id>
         </repository>
     </repositories>
